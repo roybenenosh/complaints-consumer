@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.time.Duration;
 import java.util.*;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 @Slf4j
 public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedEvent> {
@@ -42,6 +44,9 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
 
     @Value("${spring.kafka.consumer.auto-commit-interval}")
     private String autoCommitInterval;
+
+    @Value("${spring.kafka.consumer.enable-auto-commit}")
+    private boolean enableAutoCommit;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -93,7 +98,7 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, complaintDeserializer);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, autoCommitInterval);
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, maxInterval);
         props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, true);
