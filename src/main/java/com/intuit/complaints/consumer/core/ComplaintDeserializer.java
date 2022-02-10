@@ -6,7 +6,6 @@ import com.intuit.complaints.dal.Complaint;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class ComplaintDeserializer implements Deserializer<Complaint> {
 
@@ -16,12 +15,10 @@ public class ComplaintDeserializer implements Deserializer<Complaint> {
     public void close() {
     }
 
-
     @Override
     public Complaint deserialize(final String topic, final byte[] bytes) {
         try {
-            return mapper.readValue(bytes, new TypeReference<Complaint>() {
-            });
+            return mapper.readValue(bytes, new TypeReference<>() {});
         } catch (final IOException e) {
             throw new IllegalArgumentException(e);
         }
