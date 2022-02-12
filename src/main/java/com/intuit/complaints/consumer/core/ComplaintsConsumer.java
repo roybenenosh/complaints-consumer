@@ -26,30 +26,6 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
 
     private final String KAFKA_COMPLAINTS_TOPIC = "complaints";
 
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Value("${spring.kafka.consumer.group-id}")
-    private String groupId;
-
-    @Value("${spring.kafka.consumer.auto-commit-interval}")
-    private String maxInterval;
-
-    @Value("${spring.kafka.consumer.max-poll-records}")
-    private String maxPollRecords;
-
-    @Value("${spring.kafka.consumer.key-deserializer}")
-    private String keyDeserializer;
-
-    @Value("${spring.kafka.consumer.value-deserializer}")
-    private String complaintDeserializer;
-
-    @Value("${spring.kafka.consumer.auto-commit-interval}")
-    private String autoCommitInterval;
-
-    @Value("${spring.kafka.consumer.enable-auto-commit}")
-    private boolean enableAutoCommit;
-
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         log.info("Application started at: " + new Date(event.getTimestamp()) + ". Consuming complaints");
