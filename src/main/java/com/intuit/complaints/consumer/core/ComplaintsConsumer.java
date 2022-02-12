@@ -70,7 +70,6 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
                     complaintList.add(record.value());
                 }
 
-
                 if (complaintList.size() > 0) {
                     log.info("Saving " + complaintList.size() + (complaintList.size() == 1 ? " complaint" : "complaints"));
                     complaintRepository.saveAll(complaintList);
