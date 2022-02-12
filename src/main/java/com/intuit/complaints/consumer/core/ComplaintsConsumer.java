@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -21,6 +22,7 @@ import java.util.*;
 public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final ComplaintRepository complaintRepository;
+    private final ConsumerFactory<String, Complaint> consumerFactory;
 
     private final String KAFKA_COMPLAINTS_TOPIC = "complaints";
 
@@ -55,7 +57,7 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
     }
 
     private void consumeComplaints() {
-        KafkaConsumer<String, Complaint> consumer = generateConsumer();
+        KafkaConsumer<String, Complaint> consumer = (KafkaConsumer<String, Complaint>) consumerFactory.createConsumer();
         consumer.subscribe(Collections.singletonList(KAFKA_COMPLAINTS_TOPIC));
 
         Duration duration = Duration.ofSeconds(1L);
@@ -86,22 +88,5 @@ public class ComplaintsConsumer implements ApplicationListener<ContextRefreshedE
                 consumer.close();
             }
         }
-    }
-
-    private KafkaConsumer<String, Complaint> generateConsumer() {
-        // programmatically configure consumer props for multi message consume implementation
-        // https://strimzi.io/blog/2021/01/07/consumer-tuning/
-        Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, complaintDeserializer);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
-        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, autoCommitInterval);
-        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, maxInterval);
-        props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, true);
-
-        return new KafkaConsumer<>(props);
     }
 }
